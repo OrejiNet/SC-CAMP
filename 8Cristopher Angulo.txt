@@ -1,0 +1,612 @@
+8	Cristopher Angulo
+
+8 sccamp8 D0BYz3pMqLfW /home/students/events/SCCamp/sccamp8
+
+
+
+Job Scheduler
+
+
+HPC Cluster has tens or hundreds odf compute nodes, but many users
+
+Without Control tow
+
+Slurm Simple Linux Utility For Resource Management 
+Open Source Software for job administration and linux management, it is the most widely used queue manager 
+
+Workflow
+
+User Writes Script ->  SBATCH Submits Job -> Queue (Pending) / Squeue -> Scheduler Assigns Nodes -> Excecution on node (myjob.out/myjob.err)
+
+
+Anatomy of an HPC Cluster
+
+Login Node access
+---> High Performance Network
+---> Compute
+---> Compute 
+---> Shared Storage
+
+Users never run heavy workloads on the login node: only edit files, compile lightly, and submit jobs to the compute nodes via slurm
+
+
+
+
+Ctrl + shift + v -: paste
+
+
+Trabajaremos con l Partición legacy
+Lo estados mix hay que tratar de no usarlo. Tiene recursos disponibles para aceptar a otro usuario, pero se comparten con otros, por ende necesitamos un nodo exclusivo.
+
+Node states
+
+iddle free
+mix partially occupied
+Alloc Fully occupoed
+down out of service
+
+
+Squeue Job Queue
+
+salloc -n 4 --partition=legacy
+
+States (ST Column)
+R = Running
+PD = Pending
+CA = Cancelled
+
+
+SRUN EJECUCIÓN INTERACTIVA
+hostname
+Para ejecutar un comando en una particion en particular
+
+[sccamp8@guane ~]$ srun --partition=amd hostname
+exadell.sc3.uis.edu.co
+[sccamp8@guane ~]$ srun --partition=fat hostname
+thor.sc3.uis.edu.co
+
+Bandera larga 2 guiones Bandera Corta Palabra corta
+srun --partition=
+
+
+
+[sccamp8@guane ~]$ srun --partition=amd --ntasks=4 hostname
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+
+[sccamp8@guane ~]$ srun --partition=amd --ntasks=32 hostname
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+	exadell.sc3.uis.edu.co
+
+
+
+
+
+
+
+
+
+[sccamp8@guane ~]$ srun --partition=amd --ntasks=3  --label  hostname
+	0: exadell.sc3.uis.edu.co
+	1: exadell.sc3.uis.edu.co
+	2: exadell.sc3.uis.edu.co
+[sccamp8@guane ~]$ srun --partition=amd --ntasks=10  --label  hostname
+	1: exadell.sc3.uis.edu.co
+	0: exadell.sc3.uis.edu.co
+	2: exadell.sc3.uis.edu.co
+	3: exadell.sc3.uis.edu.co
+	4: exadell.sc3.uis.edu.co
+	5: exadell.sc3.uis.edu.co
+	6: exadell.sc3.uis.edu.co
+	7: exadell.sc3.uis.edu.co
+	8: exadell.sc3.uis.edu.co
+	9: exadell.sc3.uis.edu.co
+[sccamp8@guane ~]$ srun --partition=amd --ntasks=20  --label  hostname
+	 1: exadell.sc3.uis.edu.co
+	 3: exadell.sc3.uis.edu.co
+	 5: exadell.sc3.uis.edu.co
+	 7: exadell.sc3.uis.edu.co
+	 9: exadell.sc3.uis.edu.co
+	 0: exadell.sc3.uis.edu.co
+	 2: exadell.sc3.uis.edu.co
+	 4: exadell.sc3.uis.edu.co
+	 6: exadell.sc3.uis.edu.co
+	 8: exadell.sc3.uis.edu.co
+	10: exadell.sc3.uis.edu.co
+	11: exadell.sc3.uis.edu.co
+	12: exadell.sc3.uis.edu.co
+	13: exadell.sc3.uis.edu.co
+	14: exadell.sc3.uis.edu.co
+	15: exadell.sc3.uis.edu.co
+	17: exadell.sc3.uis.edu.co
+	18: exadell.sc3.uis.edu.co
+	19: exadell.sc3.uis.edu.co
+	16: exadell.sc3.uis.edu.co
+
+
+nano hello.c
+gcc hello.c -o hello
+srun ./hello
+
+
+Reservas Interactiva
+
+Voy a trabajar directamente en el nodo
+
+Malo:  srun -n 4 -p amd --pty bash 
+exit
+squeque
+
+Bueno Hago reserva: salloc  -n 4 -p amd  
+luego : ssh exadell
+cancelar reserva: exit
+cancelar los comandos: scancel "JOBID"
+
+
+Variables de Ambiente
+Le pertenecen al sistema operativo
+printenv
+[sccamp8@guane sccamp26]$ printenv | grep SLURm
+[sccamp8@guane sccamp26]$ printenv | grep SLURM
+[sccamp8@guane sccamp26]$ echo $PATH
+/home/students/events/SCCamp/sccamp8/.local/bin:/home/students/events/SCCamp/sccamp8/bin:/opt/ohpc/pub/mpi/libfabric/1.18.0/bin:/opt/ohpc/pub/mpi/ucx-ohpc/1.20.1/bin:/opt/ohpc/pub/libs/hwloc/bin:/opt/ohpc/pub/mpi/openmpi5-gnu14/5.0.7/bin:/opt/ohpc/pub/compiler/gcc/14.2.0/bin:/opt/ohpc/pub/utils/prun/2.2:/opt/ohpc/pub/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin
+[sccamp8@guane sccamp26]$
+
+
+Modulos de Ambiente
+
+A module packages environment variables (PATH, LD_LIBRARY_PATH, etc)inside a script
+module av
+module purge
+gcc --version
+
+module load gnu15/15.2.0
+
+
+
+OpenMP Ahora
+
+Estandar para arquitectura de memoria compartida 
+Material Public Intel
+Todas las liberias de computo grafico corren sobre OpenMP
+
+shared memory, OpenMP and new models of programming, everyday platforms, new trends
+
+Modelos de Memoria
+
+Shared Memory
+Tenemos varios procesadores usando la misma memoria o al menos algunas partes de la misma memoria del sistema
+
+Sucede cuando hay muchos nucles por procesador.
+
+
+[sccamp8@guane OpenMP]$ gcc -fopenmp e1.c -o e1
+[sccamp8@guane OpenMP]$ ./ei
+-bash: ./ei: No such file or directory
+[sccamp8@guane OpenMP]$ ./e1
+Hello world
+Hello world
+Hello world
+Hello world
+Hello world
+Hello world
+Hello world
+Hello world
+Hello world
+Hello world
+Hello world
+Hello world
+Hello world
+Hello world
+Hello world
+Hello world
+
+Toma la instruccion y la manda a ejecutar a los cores 
+
+
+Si tengo 10 nucleos y 20 hilos
+podria usar round robin, 2 hilos por cada nucleo
+
+
+Variable de entorno
+redefine el numero de threads
+export OMP_NUM_THREADS=4
+
+
+
+
+Modelo Fork Join
+
+Master Thread -> Hilo Cero
+
+all threads runs the same code
+
+
+Splitting de la ejecucion de los otrozo de codigo?
+
+
+Private Shared
+
+OpenMp esta diseñado para arquiecturas de memoria compartida, pero es importante compartir variables en muchos contexto
+
+Variables declaradas antes de la seccion paralela, se compartiran entre hilos ejecutandose 
+
+Variables creadas adentro de la sección paralela son privadas en ese contexto
+
+Referene a pragma 
+Las instrucciones se agrupan con llaves
+Sin las llaves se aplica a una sola linea
+
+Condicion de Carrera: Competencia por los recursos y las variables
+
+
+#include <stdlib.h>
+#include <stdio.h>
+
+int main(char **argv,int argc)
+{ int i=0;
+#pragma omp parallel for
+     for (i=0;i<10;i++)
+         printf("%d \n",i);
+exit (0);
+}
+
+Pragma Omp parallel For Automaticamente separa el N en la cantidad de hilos
+
+Para paralle for los conjuntos son disjuntos
+
+
+#include <stdlib.h>
+#include <stdio.h>
+
+#define MAX 1000
+int N=MAX;
+double arrayA[MAX];
+double arrayB[MAX];
+
+double product(double* a, double* b, int N)
+{ int i=0;
+  double sum = 0.0;
+#pragma omp parallel for shared(sum)
+   for(i=0; i<N; i++) {
+#pragma omp critical
+     sum += a[i] * b[i];
+   }
+  return sum;
+}
+
+int main()
+{ int i=0;
+  double f=0.0;
+  for (i=0;i<N;i++)
+      { arrayA[i]=  i;
+        arrayB[i]=2*i;
+      }
+  f=product(arrayA,arrayB,N);
+  printf(" result: %f\n",f);
+exit (0);
+}
+
+
+Operacion de reduction
+
+The best way to avoid performance degradation, is to keep private copies
+
+Please keep a private copy of X, initialize, and apropriately combine all private X´s at the end
+
+Operators can be sums
+
+
+Inside paralel claude variables are initialized with neutral value
++ = 0
+* = 1
+- = 0
+
+En la cuenta bancaria es mejor usar seccion critica
+
+Comment on parallel for
+
+since matrixes operations are, by far, the most common parallel operation in scientific computing, parallel for clause is very important in terms of performance
+
+Load Balance 
+
+Not all the tasks derived from a parallel for will consume the same time, For instance, think about probabilisitc algorithms 
+
+
+Load Balance
+
+El tiempo de ejecución es tan rapido con el hilo mas lento 
+
+una manera de evitar el desbalanceo, scheduling jobs
+Particion estatica y no varía
+Pariticion dinámica
+Theads puede tomar dinámicamente tanto trabajo como ellos traten
+Esto lidera mas eficiencia de ejecucion, Piensa en tareas as a card dealer asignando trabajos como hilos 
+
+
+schedule(dinamyc)
+schedule(dinamyc, K)
+schedule(guided)
+schedule(guided, k)
+schedule(runtime)
+Hilo de control
+
+
+Ayer vimos comunicación intra usando la memoria y variables. Las comunicaciones intraprocesador son regularmente más confiables
+
+Super Computing and distributed Computing Camp
+
+MPI Esta diseñado para explotar la capacidad maxima de una maquina con un procesador con varios núcleos
+Message Passing Interface.
+
+
+MPI is and standard for message passing systems. It is designed by a group of researchers from academic and private companies to create portable code capable to run on different parallel platforms.
+
+Se diseño una interfaz que sería una liberia con tales metodos y comportamientos esperados. La implementación queda delegado a los que la desarrollaron y sola la usamos.
+
+La interfaz es para el envío de mensajes.
+
+Diseñado para memoria distribuida, cada computador tiene su propia RAM y solo intercambia mensajes usando la red. TCP/IP es necesario la tarjeta de red.
+
+
+Beowulf Ing de la Nasa. No tenia permisos para acceder al supercomputador. Entonces, se dio cuenta que habia PCs que no estaban siendo usados, luego en un rack los conecto. Fue el primero que montó un cluster.
+
+
+Therefore we need to extend, somehow, our computing power using remote resources.
+
+OpenMP
+Modelo facil de programar
+Pocas Modificaciones de Código
+Desarrollo corto de desarrollo
+Solo escala unicamente con recursos locales
+
+MPI
+Tenemos que reescribir nuestro programa
+Dificil de programar
+Mayor tiempo de desarrollo
+Escala muy bien con recursos distribuidos
+Nosotros necesitamos conocer muy bien la plataform
+
+Implementaciones del standard de MPI
+
+MPICH
+LAM
+OpenMPI
+MVAPICH
+
+Objetivos de MPI
+
+Proveer codigo portable
+Proveer implementaciones eficientes
+Soportar arquiecturas en paralelo heterogeneas
+
+How to work with MPI
+
+Data level parallelism
+
+Multiplicacion de matrices (fila x columna)
+[] x [] = []
+Se puede calcular de manera paralela
+Si tengo una matriz de 3x3 Mando una fila y una columna a cada nodo y ahi calculo 
+
+Es muy parecido al fork join
+Hay uno nodo maestro que divide la matriz
+
+Dentro de la Iglesia pero adentro esta el supercomputador
+(Barcelona Super Computing center)
+
+Granularidad Fina y Granularidad gruesa
+
+
+Ejemplo Base de datos se consume por el nodo maestro y divide los datos, luego transfiere los datos a los nodos esclavos, pero el maestro tambien puede calcular para que no espere a los otros nodos 
+Cada nucleo con 1 mega de ram
+
+
+Hay una parte en la inicializacion, donde todo el codigo ejecutable se envia a traves de los nodos. Por ejemplo con NFS consumiendo recursos de red, tiempo, etc. Envío el código.
+
+Programa es el codigo en frio
+Proceso es la ejecucion del codigo en Caliente
+El programa se ejecuta en diferentes procesos
+
+argc cantidad de programas
+argv arreglo de parametros
+
+Un comunicador en un grupo de procesos. Un espacio de comunicación asilado.
+
+MPI run envio el programa, librerias etc. Todo levantado
+MPI init inicializa Arranca la ejecucion paralela y las transferencia de mensajes y envia los parametros a todo el mundo. 
+
+MPI Comm rank -> quien soy
+MPI_COMM_WORLD -> Comunicador es una variable que hace referencia a todo el grupo del proceso creado por el comando de ejecucion. Es el comunicador por defecto. [Entre cero y la cantidad de nodos]
+&my_id -> En el master va a valer cero. Da un valor distinto en cada uno de los procesadores. 
+MPI COMM SIZE -> Cantidad de procesadores que hay, Guarda el tamaño de el comunicador en nproc variable
+
+
+MPI send (pongo a todos en espera para recibir el mensaje), el 0->1->2->3->0
+
+&source
+1
+MPI_INT
+(my_id+1)%nproc formula del numero del proceso que envia
+tag
+MPI_COMM_WORLD
+
+int DoSomeWork();
+
+MPI_Recv (voy a recibir un mensaje de alguien) 
+&source
+1
+MPI_INT
+MPI_ANY_SOURCE
+tag (ordenar los mensajes por etiqueta)
+MPI_COMM_WORLD
+&status (todo el detalle en una variable estado)
+
+Necesito 3 parametros para decir que estoy enviando
+
+
+MPI Finalize termina la seccion paralela, limpia el buffer
+	- El MPI run tambien limpiar
+
+El slurm puede matar procesos zombies
+
+
+MPI Programming Model
+
+Intrucciones de control Init End
+MPI implementations are libraries. All MPI Instructions are functions calls
+
+Point to Point Communications
+Collective communications
+Data Types Management
+
+MPIrun -machinefile machines -np 4 program.exe
+Nombres de las maquinas asociadas a un DNS local
+Es necesario configurar algunas variables de ambiente
+
+Donde estan en la memoria las cosas que vas a enviar
+MPI_Send(&buffer, size, MPI_INT)
+MPI_Recv(&buffer, size, MPI_INT)
+
+MPI_INT que tamaño en bytes tiene esta arquiectura.
+La arquietcturas modernas tienen los int con 4 bytes y supercomputo con 8 bytes
+
+MPI_INT sizeof(struct person)
+
+MPI_INT si fuera una arreglo 10 elementos A
+(A,10,)
+
+MPI_INT tamaño del tipo del elemento
+
+int*A (es el apuntar del arreglo)
+A = malloc(1000*sizeof(int)) (reserva la memoria de 1000 enteros)
+A[5] = 3 -> Sobrescribe la memoria y no la variable
+A [0 0 0 0 3]
+Se manda el A tal cual. Ya es una referencia el nombre en si mismo
+
+int i;
+Se manda con el &
+
+
+There are several native data type:
+
+MPI_BYTE
+MPI_INT
+MPI_CHAR
+MPI_SHORT
+MPI_FLOAT
+MPI_DOUBLE
+MPI_LONG_DOUBLE
+MPI_UNSIGNED
+
+a DATA TO SEND
+n number of element in a
+MPI_INT integer data type
+dest ID of the destination process (0,N-1)
+tag Label to identify the message
+COMM Communicator
+
+a DATA TO RECIEVE
+n number of element in a
+MPI_INT integer data type
+source ID of the sender process
+COMM Communicator
+stat Array containing information about the message in case of error
+
+Completion of the communication
+
+Significa que la localizaciones de memoria usadas en el mensaje transferido puede ser accedido seguramente
+
+Sender Side variables enviadas pueden ser reused despues de completarse
+
+Receiver Side  variable recibida ahora puede ser usada
+
+Modos Comunicaciones 
+Bloqueantes hasta que reciba el mensaje, El que recibe es bloqueante por defecto 
+No Bloqueante el que envia no es bloqueante. Tambien puede ser al reves dependiendo del contexto
+
+Son no bloqueantes
+MPI_Isend(...MPI_Request*req)
+MPI_Irecv(...MPI_Request*req)
+
+req identificador del manipulador de comunicaciones. Puede ser usado
+mas tarde para consultar el estado de la comunicacion or esperar por terminar
+
+MPI_Test 
+
+Dice si se hizo o no 
+req communication handle
+flag true if the communication is completed
+stat Statys Object
+
+Operaciones y Comunicaciones Colectivas
+
+BroadCast -> Enviar a todos al mismo tiempo 
+Implementa funciones para enviar y recibir datos de multiples procesadores
+Cada Proceso ejecuta las mismas operaciones de comunicacion
+
+
+Envia el mismo mensaje a todos los procesos
+MPI_Bcast(buffer, count, datatype, src, comm)
+Master, N slaves
+En todas el SRC es cero
+
+MPI_CAST(buff, LIM, MPI_INT, 0, MPI_COMM_WORLD)
+
+wrapper para compilar
+mpicc e1.c -o e-1
+mpirun -n 4 e-1  2>/dev/null
+
+
+Hacemos un For para enviarlo nosotros mismos
+
+
+MPIC_REDUCE(*sendbuf,*recvbuf,count, type, MPI_Op op, src, comm)
+
+
+MPI_Op -> Sum, Max
+
+El mensaje se reparte en N iguales segmentos, del iésimo segmento es enviado al iésimo proceso en el grupo
+
+MPI_Scatter(void *sendbuf, int sendcount, MPI_Datatype sendtype, void*recvbuf, int recvcount, MPI_Datatype recvtype, int root, MPI_Comm)
+
+
+es como un join 
+MPI_GATHER 
+
+MPI_Barrier espera a los otros nodos
+
+
+
